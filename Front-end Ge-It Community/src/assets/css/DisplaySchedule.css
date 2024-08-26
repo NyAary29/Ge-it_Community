@@ -1,0 +1,55 @@
+/* DisplaySchedule.css */
+
+.schedule-manager-container {
+    width: 100%;
+    max-width: max-content;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tab-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 10px 20px;
+    margin: 0 5px;
+    background-color: #e9ecef;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.tab-button.active {
+    background-color: #eb4f1f;
+    color: white;
+}
+
+.tab-button:hover {
+    background-color: #fdc938;
+    color: white;
+}
+
+.week-selection-form {
+    margin-top: 20px;
+}
+
+.week-selection-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.week-selection-dropdown {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}

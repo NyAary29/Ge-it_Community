@@ -1,13 +1,13 @@
 import React from 'react'
 import Header from 'components/Headers/Header'
 import MyLoading from 'components/Loading/MyLoading'
-import MySchedule from 'components/Calendar/Schedule'
+import ScheduleManager from 'components/Calendar/DisplaySchedules'
 function Event() {
   return (
     <div>
       <MyLoading />
       <Header />
-      <MySchedule/>
+      <ScheduleManager />
     </div>
   )
 }

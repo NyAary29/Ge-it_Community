@@ -14,6 +14,7 @@ const routeAdmin = require('./routes/adminRoute')
 const routeStudent =require('./routes/studentRoute')
 const routeTeacher = require('./routes/teacherRoute')
 const routeCours = require('./routes/coursRoute')
+const routeEvent = require('./routes/eventRoute')
 
 app.use(cors());
 app.use(bodyParser.json()); // Utilisation de bodyParser.json()
@@ -27,10 +28,11 @@ const db = require('./db');
 app.use(myconnection(mysql, db, 'pool'));
 
 //use routes
-app.use(routeAdmin);
+app.use(routeAdmin)
 app.use(routeStudent)
 app.use(routeTeacher)
 app.use(routeCours)
+app.use(routeEvent)
 
 //listen port
 const http_port = 8800;
