@@ -11,6 +11,8 @@ import channelRoutes from "./routes/ChannelRoutes.js"
 
 dotenv.config()
 
+
+
 const app = express()
 const port = process.env.PORT || 3001
 const databaseURL= process.env.DATABASE_URL

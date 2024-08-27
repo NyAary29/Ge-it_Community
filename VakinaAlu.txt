@@ -1,7 +1,0 @@
-rehefa handefa anle User lisany an de miisntall mongodb alu 
-de rehefa veo manao npm install sns....
-cd miditra client npm run dev
-cd miditra server npm run dev 
-
-de mande normalement sinon jereo le erreur 
-:::::::::::::::::::: Zay GG :::::::: 
