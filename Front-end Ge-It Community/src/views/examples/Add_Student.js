@@ -43,6 +43,10 @@ const Add_Student = () => {
   const handleChange = (event) => {
     setValues({ ...values, sexe: event.target.value });
   };
+  const handleChangeLevel = (event) => {
+    setValues({ ...values, niveau: event.target.value });
+  };
+  
 
   return (
     <div>
@@ -231,15 +235,14 @@ const Add_Student = () => {
                     <i className="ni ni-hat-3" />
                     </InputGroupText>
                   </InputGroupAddon>
-                  <Input
-                    placeholder="Level"
-                    type="text"
-                    id="niveau"
-                    onChange={(e) =>
-                      setValues({ ...values, niveau: e.target.value })
-                    }
-                    required
-                  />
+                  <select id="niveau" className="custom-select" onChange={handleChangeLevel}>
+                    <option value="">Select level</option>
+                    <option value="L1">L1</option>
+                    <option value="L2">L2</option>
+                    <option value="L3">L3</option>
+                    <option value="M1">M1</option>
+                    <option value="M2">M2</option>
+                  </select>
                 </InputGroup>
               </FormGroup>
               <FormGroup>

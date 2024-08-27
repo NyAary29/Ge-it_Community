@@ -15,8 +15,6 @@ routeStudent.get('/student', (req, res) => {
 });
 
 
-
-
 routeStudent.get('/student/count', (req, res) => {
   const sql = 'SELECT COUNT(*) AS studentCount FROM student;';
   db.query(sql, (error, resultat) => {

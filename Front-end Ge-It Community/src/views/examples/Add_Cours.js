@@ -4,6 +4,7 @@ import MyLoading from "components/Loading/MyLoading";
 import Header from "components/Headers/Header";
 import { Link } from "react-router-dom";
 import "../../assets/css/Login_admin.css";
+import { FaBook, FaFileAlt, FaClock, FaLayerGroup, FaChalkboardTeacher} from "react-icons/fa"; // Importing appropriate icons
 
 import {
     Card,
@@ -20,16 +21,17 @@ import {
 } from "reactstrap";
 
 const Add_Cours = () => {
-    const [teacher, setTeacher] = useState([])
+    const [teacher, setTeacher] = useState([]);
     useEffect(() => {
         axios.get('http://localhost:8800/teacher')
             .then(res => {
-                setTeacher(res.data)
+                setTeacher(res.data);
             })
             .catch(err => {
-                console.error("Erreur de la récupération des données")
-            })
-    }, [])
+                console.error("Erreur de la récupération des données");
+            });
+    }, []);
+
     const [values, setValues] = useState({
         titre_cours: '',
         description: '',
@@ -44,26 +46,27 @@ const Add_Cours = () => {
         e.preventDefault();
         axios.post('http://localhost:8800/add_cours', values)
             .then(res => alert('Insertion avec succès'))
-            .catch(err => alert("Echec d'insertion"))
-    }
+            .catch(err => alert("Echec d'insertion"));
+    };
 
     const handleChange = (event) => {
-        // Mettre à jour l'état genre avec la valeur sélectionnée dans la liste déroulante
         setValues({ ...values, id_prof: event.target.value });
     };
 
+    const handleChangeLevel = (event) => {
+        setValues({ ...values, niveau: event.target.value });
+    };
 
     return (
         <div>
             <MyLoading />
             <Header />
-            <Col lg="12" md="8" style={{ top: "10px", width: "500px" }} className="mx-auto" >
+            <Col lg="12" md="8" style={{ top: "10px", width: "500px" }} className="mx-auto">
                 <Card className="bg-secondary shadow border-0">
                     <CardHeader
                         className="pb-5"
                         style={{
-                            background:
-                                "linear-gradient(to top, #ee7724, #c92628, #dd5824, #b44593)",
+                            background: "linear-gradient(to top, #ee7724, #c92628, #dd5824, #b44593)",
                             border: "none",
                         }}
                     >
@@ -94,7 +97,7 @@ const Add_Cours = () => {
                                 <InputGroup className="input-group-alternative mb-3">
                                     <InputGroupAddon addonType="prepend">
                                         <InputGroupText>
-                                            <i className="ni ni-hat-3" />
+                                            <FaBook /> {/* Course Title Icon */}
                                         </InputGroupText>
                                     </InputGroupAddon>
                                     <Input
@@ -112,7 +115,7 @@ const Add_Cours = () => {
                                 <InputGroup className="input-group-alternative mb-3">
                                     <InputGroupAddon addonType="prepend">
                                         <InputGroupText>
-                                            <i className="ni ni-email-83" />
+                                            <FaFileAlt /> {/* Description Icon */}
                                         </InputGroupText>
                                     </InputGroupAddon>
                                     <Input
@@ -130,12 +133,12 @@ const Add_Cours = () => {
                                 <InputGroup className="input-group-alternative">
                                     <InputGroupAddon addonType="prepend">
                                         <InputGroupText>
-                                            <i className="ni ni-lock-circle-open" />
+                                            <FaClock /> {/* Total Hours Icon */}
                                         </InputGroupText>
                                     </InputGroupAddon>
                                     <Input
                                         placeholder="Total Hours"
-                                        type=" number"
+                                        type="number"
                                         id="heure_total"
                                         onChange={(e) =>
                                             setValues({ ...values, heure_total: e.target.value })
@@ -148,29 +151,28 @@ const Add_Cours = () => {
                                 <InputGroup className="input-group-alternative">
                                     <InputGroupAddon addonType="prepend">
                                         <InputGroupText>
-                                            <i className="ni ni-lock-circle-open" />
+                                            <FaLayerGroup /> {/* Level Icon */}
                                         </InputGroupText>
                                     </InputGroupAddon>
-                                    <Input
-                                        placeholder="Level"
-                                        type="text"
-                                        id="level"
-                                        onChange={(e) =>
-                                            setValues({ ...values, level: e.target.value })
-                                        }
-                                        required
-                                    />
+                                    <select id="level" className="custom-select" onChange={handleChangeLevel}>
+                                        <option value="">Select level</option>
+                                        <option value="L1">L1</option>
+                                        <option value="L2">L2</option>
+                                        <option value="L3">L3</option>
+                                        <option value="M1">M1</option>
+                                        <option value="M2">M2</option>
+                                    </select>
                                 </InputGroup>
                             </FormGroup>
                             <FormGroup>
                                 <InputGroup className="input-group-alternative">
                                     <InputGroupAddon addonType="prepend">
                                         <InputGroupText>
-                                            <i className="ni ni-lock-circle-open" />
+                                            <FaClock /> {/* Weekly Hours Icon */}
                                         </InputGroupText>
                                     </InputGroupAddon>
                                     <Input
-                                        placeholder="Heure par Semaine"
+                                        placeholder="Weekly Hours"
                                         type="number"
                                         id="heure_semaine"
                                         onChange={(e) =>
@@ -184,11 +186,11 @@ const Add_Cours = () => {
                                 <InputGroup className="input-group-alternative">
                                     <InputGroupAddon addonType="prepend">
                                         <InputGroupText>
-                                            <i className="ni ni-lock-circle-open" />
+                                            <FaClock /> {/* Completed Hours Icon */}
                                         </InputGroupText>
                                     </InputGroupAddon>
                                     <Input
-                                        placeholder="Heure effectué"
+                                        placeholder="Completed Hours"
                                         type="number"
                                         id="heure_effectue"
                                         onChange={(e) =>
@@ -198,20 +200,28 @@ const Add_Cours = () => {
                                     />
                                 </InputGroup>
                             </FormGroup>
-                            
 
                             <div className="form-outline mb-4">
-                                <select id="id_prof" onChange={handleChange}>
-                                    <option value="">Select Professor</option>
-                                    {teacher.map((teacher, index) => (
-                                        <option value={teacher.N_matricule}>{teacher.nom}</option>
-                                    ))}
-                                </select>
+                                <InputGroup className="input-group-alternative">
+                                    <InputGroupAddon addonType="prepend">
+                                        <InputGroupText>
+                                            <FaChalkboardTeacher /> {/* Professor Icon */}
+                                        </InputGroupText>
+                                    </InputGroupAddon>
+                                    <select id="id_prof" className="custom-select" onChange={handleChange}>
+                                        <option value="">Select Professor</option>
+                                        {teacher.map((teacher, index) => (
+                                            <option key={index} value={teacher.N_matricule}>
+                                                {teacher.nom}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </InputGroup>
                             </div>
 
                             <div className="text-center">
-                                <button type="submit" className="btn btn-primary mt-4"  >
-                                    Sign in
+                                <button type="submit" className="btn btn-primary mt-4">
+                                    Add Course
                                 </button>
                             </div>
 

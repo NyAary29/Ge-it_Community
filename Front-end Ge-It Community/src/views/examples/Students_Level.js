@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, CardHeader, Container, Row, FormGroup, Label, Input } from "reactstrap";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { MdOutlineMode } from "react-icons/md";
 import { TiUserDeleteOutline } from "react-icons/ti";
 import Header from "components/Headers/Header.js";
@@ -9,25 +9,16 @@ import MyLoading from "../../components/Loading/MyLoading";
 import { DataTable } from 'primereact/datatable'; // Adjust according to your DataTable library
 import { Column } from 'primereact/column'; // Adjust according to your DataTable library
 
-const Students = () => {
+const StudentsLevel = () => {
   const [students, setStudents] = useState([]);
-  const [filteredStudents, setFilteredStudents] = useState([]);
   const [expandedRows, setExpandedRows] = useState([]);
   const [levels, setLevels] = useState([]); // State to hold the list of levels
   const [selectedLevel, setSelectedLevel] = useState(''); // State to hold the selected level
+  const { niveau } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch students
-    axios.get('http://localhost:8800/student')
-      .then(res => {
-        setStudents(res.data);
-        setFilteredStudents(res.data); // Set initial filtered list
-      })
-      .catch(err => {
-        console.error("Erreur de la récupération des données", err);
-      });
-
-    // Fetch levels for dropdown
+    // Fetch levels for the dropdown
     axios.get('http://localhost:8800/levels')
       .then(res => {
         setLevels(res.data);
@@ -35,14 +26,28 @@ const Students = () => {
       .catch(err => {
         console.error("Erreur de la récupération des niveaux", err);
       });
-  }, []);
+
+    // Fetch students based on the selected level or route parameter
+    axios.get(`http://localhost:8800/student/${niveau}`)
+      .then(res => {
+        setStudents(res.data);
+      })
+      .catch(err => {
+        console.error("Erreur de la récupération des données", err);
+      });
+  }, [niveau]);
+
+  const handleLevelChange = (e) => {
+    const level = e.target.value;
+    setSelectedLevel(level);
+    navigate(`/studentsLevel/${level}`); // Update the URL with the selected level
+  };
 
   const handleDelete = (matricule) => {
     if (window.confirm('Êtes-vous sûr de vouloir le supprimer ?')) {
       axios.delete(`http://localhost:8800/delete_student/${matricule}`)
         .then(res => {
           setStudents(students.filter(student => student.N_matricule !== matricule));
-          setFilteredStudents(filteredStudents.filter(student => student.N_matricule !== matricule));
           window.alert('Student deleted successfully');
         })
         .catch(err => {
@@ -52,19 +57,8 @@ const Students = () => {
     }
   };
 
-  const handleLevelChange = (e) => {
-    const level = e.target.value;
-    setSelectedLevel(level);
-
-    if (level === '') {
-      setFilteredStudents(students); // Show all students if no level is selected
-    } else {
-      setFilteredStudents(students.filter(student => student.niveau === level));
-    }
-  };
-
   const rowExpansionTemplate = (data) => (
-    <div className="p-3" style={{backgroundColor:'whitesmoke'}}>
+    <div className="p-3 " style={{backgroundColor:'whitesmoke'}}>
       <p><strong>Address:</strong> {data.adresse}</p>
       <p><strong>Phone number:</strong> {data.tel}</p>
       <p><strong>Email:</strong> {data.email}</p>
@@ -90,14 +84,14 @@ const Students = () => {
                     value={selectedLevel}
                     onChange={handleLevelChange}
                   >
-                    <option value="">All Levels</option>
-                    {levels.map(level => (
-                      <option key={level} value={level}>{level}</option>
+                    <option value="">Select Level</option>
+                    {students.map(stu => (
+                      <option key={niveau} value={niveau}>{niveau}</option>
                     ))}
                   </Input>
                 </FormGroup>
               </CardHeader>
-              <DataTable value={filteredStudents} expandedRows={expandedRows}
+              <DataTable value={students} expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={rowExpansionTemplate}
                 dataKey="N_matricule" tableStyle={{ minWidth: '60rem' }}>
@@ -134,4 +128,4 @@ const Students = () => {
   );
 };
 
-export default Students;
+export default StudentsLevel;

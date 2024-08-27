@@ -40,12 +40,26 @@ routeCours.get('/cours/affichage', (req, res) => {
 });
 
 
+routeCours.get('/cours/:id_cours', (req, res) => {
+  const sql = 'SELECT * FROM cours WHERE id_cours=?';
+  const id_cours = req.params.id_cours
+
+  db.query(sql,[id_cours], (error, resultat) => {
+      if (error) {
+          console.log(error);
+          res.status(500).json({ error: "Erreur lors de la récupération des cours" });
+      } else {
+          res.status(200).json(resultat);
+      }
+  });
+});
+
 // Fonction pour ajouter un cours
 routeCours.post('/add_cours', (req, res) => {
-  const { titre_cours, description, heure_total, level, status, id_prof,heure_semaine,heure_effectue } = req.body;
+  const { titre_cours, description, heure_total, level, id_prof,heure_semaine,heure_effectue } = req.body;
 
-  db.query('INSERT INTO cours (titre_cours, description, heure_total, level, status, id_prof,heure_semaine,heure_effectue) VALUES (?, ?, ?, ?, ?, ?,?,?)',
-    [titre_cours, description, heure_total, level, status, id_prof,heure_semaine,heure_effectue], (erreur, resultat) => {
+  db.query('INSERT INTO cours (titre_cours, description, heure_total, level, id_prof,heure_semaine,heure_effectue) VALUES (?, ?, ?, ?, ?, ?,?)',
+    [titre_cours, description, heure_total, level, id_prof,heure_semaine,heure_effectue], (erreur, resultat) => {
       if (erreur) {
         console.log(erreur);
         res.status(500).json({ error: "Erreur lors de l'ajout du cours" });
@@ -57,11 +71,12 @@ routeCours.post('/add_cours', (req, res) => {
 });
 
 // Fonction pour modifier un cours
-routeCours.post('/modified_cours', (req, res) => {
-  const { id_cours, titre_cours, description, heure_total, level, status, id_prof } = req.body;
+routeCours.put('/modify_cours/:id_cours', (req, res) => {
+  const id_cours = req.params.id_cours;
+  const { titre_cours, description, heure_total, level, id_prof,heure_semaine, heure_effectue } = req.body;
 
-  db.query('UPDATE cours SET titre_cours=?, description=?, heure_total=?, level=?, status=?, id_prof=? WHERE id_cours=?',
-    [titre_cours, description, heure_total, level, status, id_prof, id_cours], (erreur, resultat) => {
+  db.query('UPDATE cours SET titre_cours=?, description=?, heure_total=?, level=?, id_prof=?,heure_semaine=?, heure_effectue=? WHERE id_cours=?',
+    [titre_cours, description, heure_total, level, id_prof,heure_semaine,heure_effectue, id_cours], (erreur, resultat) => {
       if (erreur) {
         console.log(erreur);
         res.status(500).json({ error: "Erreur lors de la modification du cours" });

@@ -3,9 +3,6 @@ import { useLocation, Route, Routes, Navigate } from "react-router-dom";
 // reactstrap components
 import { Container, Row } from "reactstrap";
 
-// core components
-import AuthFooter from "components/Footers/AuthFooter.js";
-
 import routes from "routes.js";
 
 const Auth = (props) => {
@@ -51,7 +48,6 @@ const Auth = (props) => {
           </Container>
         </div>
       </div>
-      <AuthFooter />
     </div>
   );
 };

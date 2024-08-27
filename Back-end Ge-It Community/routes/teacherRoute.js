@@ -63,7 +63,7 @@ routeTeacher.put('/modify_teacher/:matricule', (req, res) => {
       });
   });
   
-routeTeacher.get('/teacher/:matricule', (req, res) => {
+  routeTeacher.get('/teacher/:matricule', (req, res) => {
     const sql = 'SELECT * FROM teacher WHERE N_matricule=?';
     const matricule = req.params.matricule
 

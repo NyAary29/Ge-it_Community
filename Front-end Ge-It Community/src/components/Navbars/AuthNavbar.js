@@ -21,7 +21,7 @@ const AdminNavbar = () => {
             <div className="navbar-collapse-header d-md-none">
               <Row>
                 <Col className="collapse-brand" xs="6">
-                  <Link to="/">
+                  <Link to={`/admin/students`}>
                     <img
                       alt="..."
                       src={require("../../assets/img/logo.png")}

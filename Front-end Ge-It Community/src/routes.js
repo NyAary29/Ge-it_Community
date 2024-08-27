@@ -1,4 +1,4 @@
-import Index from "views/Index.js";
+
 import Event from "views/examples/Event_Management.js";
 import Login from "views/examples/Login";
 import Courses from "views/examples/Courses.js";
@@ -11,15 +11,10 @@ import AddTeacher from "views/examples/Add_Teacher";
 import AddCours from "views/examples/Add_Cours";
 import EditStudent from "views/examples/Edit_Student";
 import EditProfessor from "views/examples/Edit_Professor";
+import EditCours from "views/examples/Edit_Cours"
 
 var routes = [
-  {
-    path: "/index",
-    name: "Main Menu",
-    icon: "ni ni-tv-2 text-primary",
-    component: <Index />,
-    layout: "/admin",
-  },
+  
   {
     name: "Students",
     icon: "fas fa-users text-red",
@@ -36,9 +31,7 @@ var routes = [
         name: "Add Student",
         component: <AddStudent />,
         layout: "/admin",
-      },
-    
-      
+      },    
     ],
   },
   {
@@ -127,6 +120,12 @@ var routes = [
   {
     path: "/modify_teacher/:matricule",
     component:  <EditProfessor />,
+    layout: "/admin",
+    invisible: true,
+  },
+  {
+    path: "/modify_cours/:id_cours",
+    component:  <EditCours />,
     layout: "/admin",
     invisible: true,
   },

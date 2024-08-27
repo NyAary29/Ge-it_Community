@@ -1,5 +1,5 @@
 const express = require('express');
-const mysql = require('mysql'); // Utilisez mysql2 au lieu de mysql
+const mysql = require('mysql2'); // Utilisez mysql2 au lieu de mysql
 const myconnection = require('express-myconnection');
 const cors = require('cors');
 const multer = require('multer')
@@ -25,7 +25,6 @@ app.use("/uploads", express.static("./uploads"));
 ///////////////////////////////////
 // Importez la connexion à la base de données depuis le fichier approprié
 const db = require('./db'); 
-app.use(myconnection(mysql, db, 'pool'));
 
 //use routes
 app.use(routeAdmin)
