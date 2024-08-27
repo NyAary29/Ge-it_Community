@@ -28,14 +28,16 @@ const Students = () => {
       });
 
     // Fetch levels for dropdown
-    axios.get('http://localhost:8800/levels')
+    axios.get('http://localhost:8800/students/level')
       .then(res => {
-        setLevels(res.data);
+        // Extraire les valeurs de "niveau" des objets
+        const levelsData = res.data.map(levelObj => levelObj.niveau);
+        setLevels(levelsData);
       })
       .catch(err => {
         console.error("Erreur de la récupération des niveaux", err);
       });
-  }, []);
+  }, [0]);
 
   const handleDelete = (matricule) => {
     if (window.confirm('Êtes-vous sûr de vouloir le supprimer ?')) {

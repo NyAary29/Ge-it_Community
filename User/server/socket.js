@@ -59,7 +59,7 @@ const setupSocket = (server) => {
         })
 
         const messageData = await Message.findById(createMessage._id)
-                                         .populate("sender"," id email firstName lastName image color ")
+                                         .populate("sender","id email firstName lastName image color ")
                                          .exec()
 
         await Channel.findByIdAndUpdate(channelId,{
@@ -79,7 +79,7 @@ const setupSocket = (server) => {
                 }
             });
 
-            const adminSocketId = userSocketMap.get(channel.admin._id.toString())
+            const adminSocketId = channel.admin._id.toString()
             
                 if(adminSocketId){
                     io.to(adminSocketId).emit("recieve-channel-message",finalData)

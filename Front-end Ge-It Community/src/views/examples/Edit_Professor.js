@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardBody, FormGroup, Form, Input, InputGroupAddon, InputGroupText, InputGroup, Col, Row } from "reactstrap";
 import MyLoading from "../../components/Loading/MyLoading";
 import Header from "../../components/Headers/Header";
@@ -8,6 +8,7 @@ import "../../assets/css/Login_admin.css";
 
 const Edit_Professor = () => {
     const { matricule } = useParams();
+    const navigate = useNavigate();
     const [teacherData, setTeacherData] = useState({
       N_matricule: '',
       nom: '',
@@ -32,7 +33,9 @@ const Edit_Professor = () => {
       e.preventDefault();
       axios.put(`http://localhost:8800/modify_teacher/${matricule}`, teacherData)
         .then(res => {
+          navigate("/admin/professors");
           alert('Modification avec succès');
+          
           // Redirection ou autre action après la mise à jour réussie
         })
         .catch(err => {

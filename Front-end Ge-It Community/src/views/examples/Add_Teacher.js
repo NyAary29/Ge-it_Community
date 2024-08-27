@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import MyLoading from "components/Loading/MyLoading";
 import Header from "components/Headers/Header";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../../assets/css/Login_admin.css";
 
 import {
@@ -20,6 +20,7 @@ import {
 } from "reactstrap";
 
 const Add_Teacher = () => {
+  const navigate = useNavigate()
   const [values, setValues] = useState({
     N_matricule: '',
     nom: '',
@@ -35,7 +36,10 @@ const Add_Teacher = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios.post('http://localhost:8800/add_teacher', values)
-      .then(res => alert('Insertion avec succès'))
+      .then(res => {
+        navigate("/admin/professors")
+        alert('Insertion avec succès')
+      })
       .catch(err => alert("Echec d'insertion"))
   }
 

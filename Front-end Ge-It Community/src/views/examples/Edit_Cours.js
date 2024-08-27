@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom"; // import useNavigate
 import { Card, CardHeader, CardBody, FormGroup, Form, Input, InputGroupAddon, InputGroupText, InputGroup, Col, Row } from "reactstrap";
 import MyLoading from "../../components/Loading/MyLoading";
 import Header from "../../components/Headers/Header";
@@ -8,6 +8,7 @@ import "../../assets/css/Login_admin.css";
 
 const Edit_Cours = () => {
   const { id_cours } = useParams();
+  const navigate = useNavigate(); // create navigate instance
   const [coursData, setCoursData] = useState({
     id_cours: '',
     titre_cours: '',
@@ -19,7 +20,6 @@ const Edit_Cours = () => {
     heure_semaine: '',
     heure_effectue: '',
   });
- 
 
   useEffect(() => {
     axios.get(`http://localhost:8800/cours/${id_cours}`)
@@ -35,6 +35,7 @@ const Edit_Cours = () => {
     e.preventDefault();
     axios.put(`http://localhost:8800/modify_cours/${id_cours}`, coursData)
       .then(res => {
+        navigate("/admin/courses");
         alert('Modification réussie');
       })
       .catch(err => {
@@ -221,7 +222,6 @@ const Edit_Cours = () => {
                       />
                     </InputGroup>
                   </FormGroup>
-                
                 </Col>
               </Row>
               <div className="text-center">

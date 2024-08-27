@@ -27,6 +27,18 @@ routeStudent.get('/student/count', (req, res) => {
   });
 });
 
+routeStudent.get("/students/level", (req,res) => {
+  const sql = "SELECT DISTINCT niveau from student "
+  db.query(sql, (error, resultat) => {
+    if (error) {
+      console.log(error);
+    }
+    else {
+      res.status(200).json(resultat)
+    }
+  })
+})
+
 routeStudent.post('/add_student', (req, res) => {
   const { N_matricule, nom, prenom, adresse, birthday, tel, email, password, niveau, sexe } = req.body;
 
