@@ -17,10 +17,12 @@ import {
   InputGroup,
   Row,
   Col,
+  Button,
+  Label
 } from "reactstrap";
 
 const Add_Student = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [values, setValues] = useState({
     N_matricule: '',
     nom: '',
@@ -31,38 +33,57 @@ const Add_Student = () => {
     email: '',
     password: '',
     niveau: '',
-    sexe: ''
+    sexe: '',
+    annee_inscription: new Date().getFullYear()
   });
 
-  const handleSubmit = (e) => {
+  const handleGenerateId = async () => {
+    try {
+      const response = await axios.post('http://localhost:8800/api/generate_id', {
+        name: values.nom + ' ' + values.prenom,
+        year: values.annee_inscription,
+      });
+      const generatedId = response.data.user_id;
+      setValues({ ...values, N_matricule: generatedId });
+    } catch (error) {
+      alert("Failed to generate ID");
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post('http://localhost:8800/add_student', values)
-      .then(res => {
-        alert('Insertion avec succès')
-        navigate("/admin/students")
-      })
-      .catch(err => alert("Echec d'insertion"))
-  }
+
+    try {
+      await axios.post('http://localhost:8800/add_student', values);
+      alert('Insertion avec succès');
+      navigate("/admin/students");
+    } catch (error) {
+      alert("Echec d'insertion");
+    }
+  };
 
   const handleChange = (event) => {
     setValues({ ...values, sexe: event.target.value });
   };
+
   const handleChangeLevel = (event) => {
     setValues({ ...values, niveau: event.target.value });
   };
-  
+
+  const handleYearChange = (event) => {
+    setValues({ ...values, annee_inscription: event.target.value });
+  };
 
   return (
     <div>
       <MyLoading />
       <Header />
-      <Col lg="12" md="8" style={{ top: "10px", width: "500px" }} className="mx-auto">
+      <Col lg="10" md="12" style={{ top: "10px" }} className="mx-auto">
         <Card className="bg-secondary shadow border-0">
           <CardHeader
             className="pb-5"
             style={{
-              background:
-                "linear-gradient(to top, #ee7724, #c92628, #dd5824, #b44593)",
+              background: "linear-gradient(to top, #ee7724, #c92628, #dd5824, #b44593)",
               border: "none",
             }}
           >
@@ -85,189 +106,234 @@ const Add_Student = () => {
           </CardHeader>
 
           <CardBody className="px-lg-5 py-lg-5">
-            
             <Form role="form" onSubmit={handleSubmit}>
-              <FormGroup>
-                <InputGroup className="input-group-alternative mb-3">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                    <i className="fa fa-id-card" />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Registration number"
-                    type="text"
-                    id="N_matricule"
-                    onChange={(e) =>
-                      setValues({ ...values, N_matricule: e.target.value })
-                    }
-                    required
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup>
-                <InputGroup className="input-group-alternative mb-3">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                    <i className="fa fa-user" aria-hidden="true"></i>
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Name"
-                    type="text"
-                    id="nom"
-                    onChange={(e) =>
-                      setValues({ ...values, nom: e.target.value })
-                    }
-                    required
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup>
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                    <i className="fa fa-user" aria-hidden="true"></i>
+              <Row>
+                <Col md="6">
 
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="First Name"
-                    type="text"
-                    id="prenom"
-                    onChange={(e) =>
-                      setValues({ ...values, prenom: e.target.value })
-                    }
-                    required
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup>
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                    <i className="fa fa-address-card" aria-hidden="true"></i>
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Address"
-                    type="text"
-                    id="adresse"
-                    onChange={(e) =>
-                      setValues({ ...values, adresse: e.target.value })
-                    }
-                    required
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup>
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                    <i className="fa fa-birthday-cake" aria-hidden="true"></i>
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Birthday"
-                    type="date"
-                    id="birthday"
-                    onChange={(e) =>
-                      setValues({ ...values, birthday: e.target.value })
-                    }
-                    required
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup>
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                    <i className="fa fa-mobile" aria-hidden="true"></i>
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Phone number"
-                    type="tel"
-                    id="tel"
-                    onChange={(e) =>
-                      setValues({ ...values, tel: e.target.value })
-                    }
-                    required
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup>
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                    <i className="fa fa-envelope-open" aria-hidden="true"></i>
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Email"
-                    type="email"
-                    id="email"
-                    onChange={(e) =>
-                      setValues({ ...values, email: e.target.value })
-                    }
-                    required
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup>
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                    <i className="fa fa-key" aria-hidden="true"></i>
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Password"
-                    type="password"
-                    id="password"
-                    onChange={(e) =>
-                      setValues({ ...values, password: e.target.value })
-                    }
-                    required
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup>
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                    <i className="ni ni-hat-3" />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <select id="niveau" className="custom-select" onChange={handleChangeLevel}>
-                    <option value="">Select level</option>
-                    <option value="L1">L1</option>
-                    <option value="L2">L2</option>
-                    <option value="L3">L3</option>
-                    <option value="M1">M1</option>
-                    <option value="M2">M2</option>
-                  </select>
-                </InputGroup>
-              </FormGroup>
-              <FormGroup>
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <i className="fa fa-venus-mars" aria-hidden="true"></i>
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <select id="sexe" className="custom-select" onChange={handleChange}>
-                    <option value="">Select gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                  </select>
-                </InputGroup>
-              </FormGroup>
+                  <FormGroup>
+                    <Label for="nom">Name</Label>
+                    <InputGroup className="input-group-alternative mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="fa fa-user" aria-hidden="true"></i>
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="text"
+                        id="nom"
+                        value={values.nom}
+                        onChange={(e) => setValues({ ...values, nom: e.target.value })}
+                        required
+                      />
+                    </InputGroup>
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="annee_inscription">Year of enrollment</Label>
+                    <InputGroup className="input-group-alternative mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="fa fa-calendar" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="number"
+                        id="annee_inscription"
+                        value={values.annee_inscription}
+                        onChange={handleYearChange}
+                        required
+                        min="1900"
+                        max={new Date().getFullYear()}
+                      />
+                    </InputGroup>
+                  </FormGroup>
+
+
+                  <FormGroup>
+                    <Label for="adresse">Address</Label>
+                    <InputGroup className="input-group-alternative mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="fa fa-address-card" aria-hidden="true"></i>
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="text"
+                        id="adresse"
+                        value={values.adresse}
+                        onChange={(e) => setValues({ ...values, adresse: e.target.value })}
+                        required
+                      />
+                    </InputGroup>
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label for="birthday">Birthday</Label>
+                    <InputGroup className="input-group-alternative mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="fa fa-birthday-cake" aria-hidden="true"></i>
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="date"
+                        id="birthday"
+                        value={values.birthday}
+                        onChange={(e) => setValues({ ...values, birthday: e.target.value })}
+                        required
+                      />
+                    </InputGroup>
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label for="tel">Phone number</Label>
+                    <InputGroup className="input-group-alternative mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="fa fa-mobile" aria-hidden="true"></i>
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="tel"
+                        id="tel"
+                        value={values.tel}
+                        onChange={(e) => setValues({ ...values, tel: e.target.value })}
+                        required
+                      />
+                    </InputGroup>
+                  </FormGroup>
+                </Col>
+
+                <Col md="6">
+
+                  <FormGroup>
+                    <Label for="prenom">First Name</Label>
+                    <InputGroup className="input-group-alternative mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="fa fa-user" aria-hidden="true"></i>
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="text"
+                        id="prenom"
+                        value={values.prenom}
+                        onChange={(e) => setValues({ ...values, prenom: e.target.value })}
+                        required
+                      />
+                    </InputGroup>
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label for="email">Email</Label>
+                    <InputGroup className="input-group-alternative mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="fa fa-envelope" aria-hidden="true"></i>
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="email"
+                        id="email"
+                        value={values.email}
+                        onChange={(e) => setValues({ ...values, email: e.target.value })}
+                        required
+                      />
+                    </InputGroup>
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label for="password">Password</Label>
+                    <InputGroup className="input-group-alternative mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="fa fa-lock" aria-hidden="true"></i>
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="password"
+                        id="password"
+                        value={values.password}
+                        onChange={(e) => setValues({ ...values, password: e.target.value })}
+                        required
+                      />
+                    </InputGroup>
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label for="niveau">Level</Label>
+                    <InputGroup className="input-group-alternative mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="fa fa-level-up" aria-hidden="true"></i>
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="select"
+                        id="niveau"
+                        value={values.niveau}
+                        onChange={handleChangeLevel}
+                      >
+                        <option value="L1">L1</option>
+                        <option value="L2">L2</option>
+                        <option value="L3">L3</option>
+                        <option value="M1">M1</option>
+                        <option value="M2">M2</option>
+                      </Input>
+                    </InputGroup>
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label for="sexe">Gender</Label>
+                    <InputGroup className="input-group-alternative">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="fa fa-venus-mars" aria-hidden="true"></i>
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="select"
+                        id="sexe"
+                        value={values.sexe}
+                        onChange={handleChange}
+                      >
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                      </Input>
+                    </InputGroup>
+                  </FormGroup>
+
+
+                </Col>
+              </Row>
               <div className="text-center">
-                <button type="submit" className="btn btn-primary mt-4">
-                  Sign in
-                </button>
+
+                <FormGroup>
+                  <Label for="N_matricule">Registration number</Label>
+                  <InputGroup className="input-group-alternative mb-3">
+                    <InputGroupAddon addonType="prepend">
+                      <InputGroupText>
+                        <i className="fa fa-id-card" />
+                      </InputGroupText>
+                    </InputGroupAddon>
+                    <Input
+                      type="text"
+                      id="N_matricule"
+                      value={values.N_matricule}
+                      readOnly
+                    />
+                    <InputGroupAddon addonType="append">
+                      <Button color="primary" onClick={handleGenerateId}>
+                        Generate
+                      </Button>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </FormGroup>
+
+                <Button type="submit" color="primary" className="mt-5">
+                  Add Student
+                </Button>
               </div>
+
             </Form>
           </CardBody>
         </Card>

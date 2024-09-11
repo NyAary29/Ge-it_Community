@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import MyLoading from "components/Loading/MyLoading";
 import { Link } from "react-router-dom";
 import "../../assets/css/Login_admin.css";
@@ -14,8 +15,8 @@ import {
   InputGroupAddon,
   InputGroupText,
   InputGroup,
-  Row,
   Col,
+  Row,
 } from "reactstrap";
 
 const Login = () => {
@@ -26,29 +27,30 @@ const Login = () => {
   });
   const [authenticated, setAuthenticated] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Initialize useNavigate
 
-  // Définissez la fonction de soumission du formulaire
+  // Define the form submission function
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Envoyez une requête POST au serveur avec les valeurs du formulaire
+      // Send a POST request to the server with form values
       const res = await axios.post("http://localhost:8800/login", values);
-      // Vérifiez la réponse du serveur
+      // Check the server response
       if (res.data === "connexion reussie") {
-        // Si l'authentification réussit, mettez à jour l'état authenticated
+        // If authentication is successful, update the authenticated state
         setAuthenticated(true);
+        // Redirect to the admin page
+        navigate("/admin/students");
       } else {
-        // Sinon, affichez un message d'erreur approprié
+        // Otherwise, display an appropriate error message
         setError("Identifiants incorrects");
       }
     } catch (err) {
-      // En cas d'erreur, affichez un message d'erreur générique
+      // Display a generic error message in case of an error
       setError("Une erreur s'est produite lors de la connexion");
-      console.error(err); // Affichez l'erreur dans la console pour le débogage
+      console.error(err); // Log the error for debugging
     }
   };
-
-
 
   return (
     <div>
@@ -144,18 +146,11 @@ const Login = () => {
               </FormGroup>
               
               <div className="text-center">
-                <button type="submit" className="btn btn-primary mt-4"  >
+                <button type="submit" className="btn btn-primary mt-4">
                   Sign in
                 </button>
-                {/* Affichage du message d'erreur */}
-
+                {/* Display error message */}
                 {error && <div className="text-danger">{error}</div>}
-                {/* Redirection si l'authentification est réussie */}
-                {authenticated && (
-                  <div>
-                    <Link to="/admin/index">Go to Admin</Link>
-                  </div>
-                )}
               </div>
             </Form>
           </CardBody>

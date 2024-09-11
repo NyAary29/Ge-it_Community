@@ -1,139 +1,127 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Card, CardHeader, Container, Row, FormGroup, Label, Input } from "reactstrap";
-import { Link } from "react-router-dom";
-import { MdOutlineMode } from "react-icons/md";
-import { TiUserDeleteOutline } from "react-icons/ti";
-import Header from "components/Headers/Header.js";
 import MyLoading from "../../components/Loading/MyLoading";
-import { DataTable } from 'primereact/datatable'; // Adjust according to your DataTable library
-import { Column } from 'primereact/column'; // Adjust according to your DataTable library
+import Header from "../../components/Headers/Header.js";
+import { Container, Row, Button, CardHeader, Card } from "reactstrap";
+import { Link } from "react-router-dom";
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { FilterMatchMode } from 'primereact/api';
+
+import { MdMode } from "react-icons/md";
+import { TiUserDeleteOutline } from "react-icons/ti";
 
 const Students = () => {
-  const [students, setStudents] = useState([]);
-  const [filteredStudents, setFilteredStudents] = useState([]);
-  const [expandedRows, setExpandedRows] = useState([]);
-  const [levels, setLevels] = useState([]); // State to hold the list of levels
-  const [selectedLevel, setSelectedLevel] = useState(''); // State to hold the selected level
+    const [students, setStudents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [expandedRows, setExpandedRows] = useState([]);
+    const [filters, setFilters] = useState({
+        'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
+        'N_matricule': { value: null, matchMode: FilterMatchMode.CONTAINS },
+        'nom': { value: null, matchMode: FilterMatchMode.CONTAINS },
+        'prenom': { value: null, matchMode: FilterMatchMode.CONTAINS },
+        'birthday': { value: null, matchMode: FilterMatchMode.DATE_IS },
+        'sexe': { value: null, matchMode: FilterMatchMode.CONTAINS },
+        'niveau': { value: null, matchMode: FilterMatchMode.CONTAINS }
+    });
 
-  useEffect(() => {
-    // Fetch students
-    axios.get('http://localhost:8800/student')
-      .then(res => {
-        setStudents(res.data);
-        setFilteredStudents(res.data); // Set initial filtered list
-      })
-      .catch(err => {
-        console.error("Erreur de la récupération des données", err);
-      });
+    useEffect(() => {
+        axios.get('http://localhost:8800/student')
+            .then(res => {
+                setStudents(res.data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error("Error fetching student data", err);
+                setLoading(false);
+            });
+    }, []);
 
-    // Fetch levels for dropdown
-    axios.get('http://localhost:8800/students/level')
-      .then(res => {
-        // Extraire les valeurs de "niveau" des objets
-        const levelsData = res.data.map(levelObj => levelObj.niveau);
-        setLevels(levelsData);
-      })
-      .catch(err => {
-        console.error("Erreur de la récupération des niveaux", err);
-      });
-  }, [0]);
+    const actionsBodyTemplate = (rowData) => {
+        const handleDelete = (matricule) => {
+            if (window.confirm("Are you sure you want to delete this student?")) {
+                axios.delete(`http://localhost:8800/delete_student/${matricule}`)
+                    .then(() => {
+                        alert("Student deleted successfully");
+                        setStudents(students.filter(student => student.N_matricule !== matricule));
+                    })
+                    .catch((error) => {
+                        console.error("There was an error deleting the student!", error);
+                    });
+            }
+        };
 
-  const handleDelete = (matricule) => {
-    if (window.confirm('Êtes-vous sûr de vouloir le supprimer ?')) {
-      axios.delete(`http://localhost:8800/delete_student/${matricule}`)
-        .then(res => {
-          setStudents(students.filter(student => student.N_matricule !== matricule));
-          setFilteredStudents(filteredStudents.filter(student => student.N_matricule !== matricule));
-          window.alert('Student deleted successfully');
-        })
-        .catch(err => {
-          console.error(err);
-          alert('Delete unsuccessfully');
-        });
-    }
-  };
+        return (
+            <div>
+                <Button color="danger" size="sm" className="mr-2" onClick={() => handleDelete(rowData.N_matricule)}>
+                    <TiUserDeleteOutline />
+                </Button>
+                <Button color="primary" size="sm">
+                    <Link to={`/admin/modify_student/${rowData.N_matricule}`} className="text-white"><MdMode /></Link>
+                </Button>
+            </div>
+        );
+    };
 
-  const handleLevelChange = (e) => {
-    const level = e.target.value;
-    setSelectedLevel(level);
+    const rowExpansionTemplate = (data) => (
+        <div className="p-3">
+            <h5>Details</h5>
+            <p><strong>Address:</strong> {data.adresse}</p>
+            <p><strong>Phone number:</strong> {data.tel}</p>
+            <p><strong>Email:</strong> {data.email}</p>
+            <p><strong>Password:</strong> {data.password}</p>
+        </div>
+    );
 
-    if (level === '') {
-      setFilteredStudents(students); // Show all students if no level is selected
-    } else {
-      setFilteredStudents(students.filter(student => student.niveau === level));
-    }
-  };
+    return (
+        <div>
+            <MyLoading />
+            <Header />
+            <Container className="mt--5" fluid>
+                <Row className="mt-7">
+                    <div className="col">
+                        <Card className="shadow">
+                            <CardHeader className="border-0 d-flex justify-content-between align-items-center">
+                                <h1 className="mb-0">STUDENTS</h1>
+                                <Link to={`/admin/add_student`} className="btn btn-info">
+                                    <i className="fa fa-plus mr-2" /> Add Student
+                                </Link>
+                            </CardHeader>
+                            <DataTable
+                                value={students}
+                                paginator
+                                rows={12}
+                                dataKey="N_matricule"
+                                filters={filters}
+                                onFilter={(e) => setFilters(e.filters)}
+                                filterDisplay="row"
+                                loading={loading}
+                                globalFilterFields={['nom', 'prenom', 'niveau']}
+                                emptyMessage="No students found."
+                                rowExpansionTemplate={rowExpansionTemplate}
+                                expandedRows={expandedRows}
+                                onRowToggle={(e) => setExpandedRows(e.data)}
+                                sortField="nom"
+                                sortOrder={1}
+                                style={{ borderRadius: '10px', overflow: 'hidden' }}
+                                className="custom-table"
+                            >
+                                <Column expander style={{ width: '3rem' }} />
+                                <Column field="N_matricule" header="Matricule" headerStyle={{ backgroundColor: '#F44336', color: '#fff' }} filter filterPlaceholder="Search by matricule" sortable style={{ minWidth: '10rem' }} />
+                                <Column field="nom" header="Last Name" headerStyle={{ backgroundColor: '#4CAF50', color: '#fff' }} filter filterPlaceholder="Search by last name" sortable style={{ minWidth: '12rem' }} />
+                                <Column field="prenom" header="First Name" headerStyle={{ backgroundColor: '#4CAF50', color: '#fff' }} filter filterPlaceholder="Search by first name" sortable style={{ minWidth: '12rem' }} />
+                                <Column field="birthday" header="Birthday" headerStyle={{ backgroundColor: '#4CAF50', color: '#fff' }} sortable style={{ minWidth: '8rem' }} />
+                                <Column field="sexe" header="Gender" headerStyle={{ backgroundColor: '#4CAF50', color: '#fff' }} filter filterPlaceholder="Search by gender" sortable style={{ minWidth: '8rem' }} />
+                                <Column field="niveau" header="Level" headerStyle={{ backgroundColor: '#4CAF50', color: '#fff' }} filter filterPlaceholder="Search by level" sortable style={{ minWidth: '8rem' }} />
+                                <Column header="Actions" headerStyle={{ backgroundColor: '#F44336', color: '#fff' }} body={actionsBodyTemplate} style={{ minWidth: '10rem' }} />
+                            </DataTable>
+                        </Card>
 
-  const rowExpansionTemplate = (data) => (
-    <div className="p-3" style={{backgroundColor:'whitesmoke'}}>
-      <p><strong>Address:</strong> {data.adresse}</p>
-      <p><strong>Phone number:</strong> {data.tel}</p>
-      <p><strong>Email:</strong> {data.email}</p>
-      <p><strong>Password:</strong> {data.password}</p>
-    </div>
-  );
-
-  return (
-    <div>
-      <MyLoading />
-      <Header />
-      <Container className="mt--7" fluid>
-        <Row className="mt-5">
-          <div className="col">
-            <Card className="shadow">
-              <CardHeader className="bg-transparent border-0">
-                <h3 className="text-black mb-0">Students</h3>
-                <FormGroup>
-                  <Label for="levelSelect">Select Level</Label>
-                  <Input
-                    type="select"
-                    id="levelSelect"
-                    value={selectedLevel}
-                    onChange={handleLevelChange}
-                  >
-                    <option value="">All Levels</option>
-                    {levels.map(level => (
-                      <option key={level} value={level}>{level}</option>
-                    ))}
-                  </Input>
-                </FormGroup>
-              </CardHeader>
-              <DataTable value={filteredStudents} expandedRows={expandedRows}
-                onRowToggle={(e) => setExpandedRows(e.data)}
-                rowExpansionTemplate={rowExpansionTemplate}
-                dataKey="N_matricule" tableStyle={{ minWidth: '60rem' }}>
-                <Column expander style={{ width: '3rem' }} />
-                <Column field="N_matricule" header="Matricule" headerStyle={{ backgroundColor: '#4CAF50', color: '#fff' }} sortable />
-                <Column field="nom" header="Last Name" headerStyle={{ backgroundColor: '#4CAF50', color: '#fff' }} sortable />
-                <Column field="prenom" header="First Name" headerStyle={{ backgroundColor: '#4CAF50', color: '#fff' }} sortable />
-                <Column field="birthday" header="Birthday" headerStyle={{ backgroundColor: '#4CAF50', color: '#fff' }} sortable />
-                <Column field="sexe" header="Gender" headerStyle={{ backgroundColor: '#4CAF50', color: '#fff' }} sortable />
-                <Column field="niveau" header="Level" headerStyle={{ backgroundColor: '#4CAF50', color: '#fff' }} sortable />
-                <Column header="Actions" headerStyle={{ backgroundColor: '#4CAF50', color: '#fff' }} body={(rowData) => (
-                  <div className="d-flex justify-content-center">
-                    <Link
-                      to="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleDelete(rowData.N_matricule);
-                      }}
-                      className="btn btn-sm btn-danger mx-1"
-                    >
-                      <TiUserDeleteOutline />
-                    </Link>
-                    <Link to={`/admin/modify_student/${rowData.N_matricule}`} className="btn btn-sm btn-primary mx-1">
-                      <MdOutlineMode />
-                    </Link>
-                  </div>
-                )} />
-              </DataTable>
-            </Card>
-          </div>
-        </Row>
-      </Container>
-    </div>
-  );
+                    </div>
+                </Row>
+            </Container>
+        </div>
+    );
 };
 
 export default Students;

@@ -253,16 +253,22 @@ const Edit_Student = () => {
                         </InputGroupText>
                       </InputGroupAddon>
                       <Input
-                        placeholder="Level"
-                        type="text"
+                        type="select"
                         name="niveau"
                         id="niveau"
                         value={studentData.niveau}
                         onChange={handleInputChange}
                         required
-                      />
+                      >
+                        <option value="L1">L1</option>
+                        <option value="L2">L2</option>
+                        <option value="L3">L3</option>
+                        <option value="M1">M1</option>
+                        <option value="M2">M2</option>
+                      </Input>
                     </InputGroup>
                   </FormGroup>
+
                   <FormGroup>
                     <label htmlFor="sexe">Gender</label>
                     <InputGroup className="input-group-alternative mb-3">
@@ -279,7 +285,6 @@ const Edit_Student = () => {
                         onChange={handleInputChange}
                         required
                       >
-                        <option value="">Select Gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                       </Input>

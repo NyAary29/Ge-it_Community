@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { TiUserDeleteOutline } from "react-icons/ti";
 import { MdOutlineMode } from "react-icons/md";
 import { Link } from "react-router-dom";
@@ -11,8 +11,8 @@ import {
 import Header from "components/Headers/Header.js";
 import MyLoading from "../../components/Loading/MyLoading";
 import axios from "axios";
-import { DataTable } from 'primereact/datatable'; // Adjust according to your DataTable library
-import { Column } from 'primereact/column'; // Adjust according to your DataTable library
+import { DataTable } from 'primereact/datatable'; 
+import { Column } from 'primereact/column'; 
 
 const Professor = () => {
     const [teachers, setTeachers] = useState([]);
@@ -22,7 +22,7 @@ const Professor = () => {
         axios.get('http://localhost:8800/teacher')
             .then(res => {
                 setTeachers(res.data);
-                setFilteredTeachers(res.data); // Set initial filtered list
+                setFilteredTeachers(res.data); 
             })
             .catch(err => {
                 console.error("Erreur de la récupération des données", err);
@@ -67,8 +67,6 @@ const Professor = () => {
             <MyLoading />
             <Header />
             <Container className="mt--7" fluid>
-               
-                {/* DataTable */}
                 <Row>
                     <div className="col">
                         <Card className="shadow">
