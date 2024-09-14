@@ -19,3 +19,17 @@
 │   └── App.jsx               # Composant principal gérant les routes avec React Router
 │
 └── vite.config.js            # Configuration de Vite
+```
+##  📁 BackEnd (Nodejs)
+```bash
+/backend
+│
+├── /controllers              # Logique des contrôleurs (authController.js)
+├── /middlewares              # Middleware pour la vérification des tokens JWT
+├── /routes                   # Définition des routes de l'API (authRoutes.js)
+├── /models                   # Modèles de la base de données (User.js)
+├── /utils                    # Fonctions utilitaires (génération et vérification JWT)
+├── /config                   # Configuration de la base de données et des secrets
+├── /tests                    # Tests unitaires (auth.test.js)
+├── server.js                 # Point d'entrée de l'application Express
+└── .env                      # Variables d'environnement pour la configuration
